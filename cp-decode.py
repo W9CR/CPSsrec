@@ -59,7 +59,7 @@ def chunks(f):
             chunk = f.read(size * repeat)
             checksum = ord(f.read(1))
             yield size, repeat, chunk, checksum
-        elif ord(byte) == 0x84: #llrrnnnn if ll == 0, each element is nnnnn long and there are rr of them if ll != 0: ll is the length of each item and and there are rr+1 of them
+        elif ord(byte) == 0x84: #llrrnnnn if ll == 0, each element is nnnnn long and there are rr of them if ll != 0: ll is the length of each item and and there are rr of them
             print ""
             print "84 field found"
             print "skipped:", skip
@@ -82,6 +82,53 @@ def chunks(f):
             print "SIZZZZZZZZZE    " "0x%x" % size
             checksum = ord(f.read(1))
             yield size, repeat, chunk, checksum
+        else:
+            skip += 1
+
+
+
+def chonks(pointer):
+    
+    skip = 0
+    while True:
+        byte = data[pointer:(pointer+1)]
+        if byte == "":
+            break
+        if ord(byte) == 0x80:
+            print ""
+            print "80 field found"
+            print "skipped:", skip
+            skip = 0
+            size = ord(data[(pointer+1):(pointer+2)])
+            repeat = ord(data[(pointer+2):(pointer+3)]) or 1
+            chunk = data[(pointer+3):((pointer+3)+(size * repeat))]
+            checksum = ord(data[(((pointer+3)+(size * repeat))):(((pointer+3)+(size * repeat))+1)])
+            yield size, repeat, chunk, checksum
+            break
+        elif ord(byte) == 0x84: #llrrnnnn if ll == 0, each element is nnnnn long and there are rr of them if ll != 0: ll is the length of each item and and there are rr+1 of them
+            print ""
+            print "84 field found"
+            print "skipped:", skip
+            if skip != 0:
+                break
+            skip = 0
+            SIZE_TUPLE = (struct.unpack('>bbH',data[(pointer+1):(pointer+5)]))
+            print "SIZE TUPLE = %s" % (SIZE_TUPLE,)
+            print "SIZE TUPLE ll = %x" % SIZE_TUPLE[0]
+            print "SIZE TUPLE rr = %x" % SIZE_TUPLE[1]
+            print "SIZE TUPLE nnnn = ", "0x%x" % SIZE_TUPLE[2]
+            if SIZE_TUPLE[0] == 0:
+                size = int(SIZE_TUPLE[2] * SIZE_TUPLE[1])
+            elif SIZE_TUPLE[0] != 0:
+                size = int(SIZE_TUPLE[0] * (SIZE_TUPLE[1]))
+        #size = int(SIZE_TUPLE[0] + SIZE_TUPLE[1])
+            print "size   "  "0x%x" % size
+            repeat =  1
+            chunk = data[(pointer+5):(pointer+5+size)]
+            print "SIZZZZZZZZZE    " "0x%x" % size
+            checksum = ord(data[(pointer+6+size)])
+            yield size, repeat, chunk, checksum
+            break
         else:
             skip += 1
 
@@ -596,7 +643,19 @@ if options.SHOW_FEATURE == True:
 
 #print "Model number = " , "%r"  % MODEL_NUMBER[0]
 
+def str2int(s, chars):
+    i = 0
+    for c in reversed(s):
+        i *= len(chars)
+        i += chars.index(c)
+    return i
 
+def int2str(i, chars):
+    s = ""
+    while i:
+        s += chars[i % len(chars)]
+        i //= len(chars)
+    return s
 
 
 
@@ -622,6 +681,17 @@ if options.SHOW_PROGRAMING == True:
     print "tocpointers length",  len(TOC_POINTERS)
     for i in range(len(TOC_POINTERS)):
         print "Block ", "0x%02X" % i ," =>" ,TOC_POINTERS[i].encode('hex')
+                              
+
+    blocknum=0x0a
+    for size, repeat, chunk, checksum in chonks(int(TOC_POINTERS[blocknum].encode('hex'), 16 ) ):
+        print "Block ", "0x%02X" % blocknum ," =>" ,TOC_POINTERS[blocknum].encode('hex')
+        print "size:", "0x%x" % size
+        print "repeat:", "0x%x" % repeat
+        print "total:", "0x%x" % size * repeat
+        print "data:"
+        print "Block ", "0x%02X" % blocknum ," =>" ,chunk.encode('hex')
+        print "checksum ", "0x%02X" % blocknum ," =>", "0x%02X" % checksum
 
 
 

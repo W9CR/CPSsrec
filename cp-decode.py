@@ -42,6 +42,7 @@ parser.add_option("-p", "--programing", action="store_true", dest="SHOW_PROGRAMI
 #        else:
 #            skip += 1
 
+
 def chunks(f):
     skip = 0
     while True:
@@ -83,6 +84,8 @@ def chunks(f):
             yield size, repeat, chunk, checksum
         else:
             skip += 1
+
+
 
 
 def hexprint(data, addrfmt=None):
@@ -132,6 +135,26 @@ def hexprint(data, addrfmt=None):
     return out
 
 
+def chksm8 (s):
+    sum = 0
+    for c in s:
+        sum += ord(c)
+        sum = sum % 0x100
+#    return '0x%2x' % (sum)
+    return sum  # this returns it as an int.
+
+
+def parse_toc(string, size=0x2, start=2):
+    length = (int(ord(string[0:1]) + ord(string[1:2])) + 0x1)
+    print "number of pointers in TOC =", (length - 1)
+    returnarray = []
+    for i in range(start, length * size, size):
+        returnarray.append(string[i:i+size])
+    return returnarray
+
+
+#example of
+#print "0x%x" % ((sum(map(ord, (binascii.a2b_hex('000a03ffdf03ff7f3faf'))))) % 0x100 )
 
 
 class BinaryReaderEOFException(Exception):
@@ -139,6 +162,8 @@ class BinaryReaderEOFException(Exception):
         pass
     def __str__(self):
         return 'Not enough bytes in file to satisfy read request'
+
+
 
 #import fileinput
 #for line in fileinput.input():
@@ -182,12 +207,45 @@ FEATURE_BLOCK = data[FEATURE_BLOCK_START+2:FEATURE_BLOCK_END]
 
 
 
+
+
 #load the rest of the CP and print length and checksum valid  the CP starts with 0x0400 on a byte boundry.  I should check for this
 
 PROGRAMING_BLOCK_START = TUNING_LENGTH + FEATURE_BLOCK_LENGTH
 PROGRAMING_BLOCK_LENGTH = (ord(data[PROGRAMING_BLOCK_START+2]) << 8) + ord(data[PROGRAMING_BLOCK_START+3])
 PROGRAMING_BLOCK_END = PROGRAMING_BLOCK_START + PROGRAMING_BLOCK_LENGTH
 PROGRAMING_BLOCK = data[PROGRAMING_BLOCK_START:PROGRAMING_BLOCK_END]
+
+
+
+
+TOC_HEADER_START = (ord(data[PROGRAMING_BLOCK_START+4]) << 8) + ord(data[PROGRAMING_BLOCK_START+5])
+TOC_START = (ord(data[PROGRAMING_BLOCK_START+6]) << 8) + ord(data[PROGRAMING_BLOCK_START+7])
+
+print "toc start 1 (hex) = ", "0x%x" % TOC_START
+
+PROGRAMING_BLOCK = data[PROGRAMING_BLOCK_START:PROGRAMING_BLOCK_END]
+
+
+
+#TOC_HEADER_LENGTH = struct.unpack(">h", (data[TOC_HEADER_START:(TOC_HEADER_START+2)]))
+TOC_HEADER_LENGTH = (ord(data[TOC_HEADER_START]) << 8) + ord(data[TOC_HEADER_START+1])
+
+print "toc Header length 1 (hex) = ", "0x%x" % TOC_HEADER_LENGTH
+
+TOC_HEADER_DATA = data[TOC_HEADER_START:(TOC_HEADER_START+TOC_HEADER_LENGTH)]
+
+# TOC has the first 2 bytes as the number of 2 byte pointers + 1 byte for checksum + the 2 byte header
+TOC_LENGTH = ((ord(data[TOC_START]) << 8) + ord(data[TOC_START+1]) <<1) + 3
+
+print "toc start 1 (hex) = ", "0x%x" % TOC_START
+
+print "toc Length 1 (hex) = ", "0x%x" % TOC_LENGTH
+
+    
+TOC_DATA = data[TOC_START:(TOC_START+TOC_LENGTH)]
+#print "toc data (hex) = ", "0x%x" % TOC_DATA
+
 
 #tuning block unpack
 
@@ -529,6 +587,7 @@ if options.SHOW_FEATURE == True:
 
     elif len(Feature_List_2) == 0x10:
         print "UNKNOWN BYTES, %s, %s, %s, %s, %s, %s, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x, %x" % (MODEL_NUMBER_BYTE_0, MODEL_NUMBER_BYTE_1, MODEL_NUMBER_BYTE_4, MODEL_NUMBER_BYTE_6, MODEL_NUMBER_BYTE_7, TANAPA, FDB_UNK_BLK_B_INT_1, FDB_UNK_BLK_C_INT_1, FDB_UNK_BLK_C_INT_2, FDB_UNK_BLK_C_INT_3, FDB_UNK_BLK_C_INT_4, FDB_UNK_BLK_C_INT_5, FDB_UNK_BLK_C_INT_6, FDB_UNK_BLK_C_INT_7, FDB2_LEN_10_INT_3, FDB2_LEN_10_INT_4, FDB2_LEN_10_INT_5, FDB2_LEN_10_INT_6, FDB2_LEN_10_INT_7, FDB2_LEN_10_INT_9, FDB2_LEN_10_INT_10, FDB2_LEN_10_INT_11, FDB2_LEN_10_INT_12, FDB2_LEN_10_INT_13, FDB2_LEN_10_INT_14, FDB2_LEN_10_INT_15, FDB2_LEN_10_INT_16)
+                      
 
 
 
@@ -540,41 +599,61 @@ if options.SHOW_FEATURE == True:
 
 
 
+
+
 if options.SHOW_PROGRAMING == True:
+ 
+    
+
     print "programing block length (hex) = ", "0x%x" % PROGRAMING_BLOCK_LENGTH
     print "programing block start (hex) = ", "0x%x" % PROGRAMING_BLOCK_START
     print "programing block end (hex) = ", "0x%x" % PROGRAMING_BLOCK_END
-    print PROGRAMING_BLOCK.encode('hex')
+    #print PROGRAMING_BLOCK.encode('hex')
+    print "toc header start (hex) = ", "0x%x" % TOC_HEADER_START
+    print "toc header length (hex) = ", "0x%x" % TOC_HEADER_LENGTH
+    print "toc header data (hex) = ", TOC_HEADER_DATA.encode('hex')
+    print "toc header checksum = ", "0x%x" % chksm8(TOC_HEADER_DATA)
 
-#setup the Progaming list tuple
-    PROGRAMMING_LIST = list()
+    print "toc start (hex) = ", "0x%x" % TOC_START
+    print "toc length (hex) = ", "0x%x" % TOC_LENGTH
+    print "toc data (hex) = ", TOC_DATA.encode('hex')
+    print "toc header checksum = ", "0x%x" % chksm8(TOC_DATA)
+    TOC_POINTERS= parse_toc(TOC_DATA)
+    print "tocpointers length",  len(TOC_POINTERS)
+    for i in range(len(TOC_POINTERS)):
+        print "Block ", "0x%02X" % i ," =>" ,TOC_POINTERS[i].encode('hex')
 
-    reader = StringIO(PROGRAMING_BLOCK)
-    for size, repeat, chunk, checksum in chunks(reader):
-        print "\nsize:", "0x%x" % size
-        print "repeat:", "0x%x" % repeat
-        print "total:", "0x%x" % (size * repeat)
-        print "data:"
-        #print hexprint(chunk)
-        PROGRAMMING_LIST.append(chunk)
-        print "checksum:", "0x%x" % checksum
-    
-    
-    
-    print "number of programing block = ", "0x%x" % len(PROGRAMMING_LIST)
-    print "PRG-BLK-0 = ", PROGRAMMING_LIST[0].encode('hex')
-    PRG_BLK_1 = PROGRAMMING_LIST[1].encode('hex')
 
-    #ProgramingBlock1struct.unpack('>10sH16sHBBBBBBBHBHHH16sBB10sBBBBBBBB',)
-    print  "PROG-BLK-1, %30s, %16s, %10s, 0x%s" % (options.filename, MODEL_NUMBER, TANAPA, PRG_BLK_1)
 
-    print "PRG-BLK-2 = ", PROGRAMMING_LIST[2].encode('hex')
-    print "PRG-BLK-3 = ", PROGRAMMING_LIST[3].encode('hex')
-    print "PRG-BLK-4 = ", PROGRAMMING_LIST[4].encode('hex')
-    print "PRG-BLK-5 = ", PROGRAMMING_LIST[5].encode('hex')
-    print "PRG-BLK-6 = ", PROGRAMMING_LIST[6].encode('hex')
-    print "PRG-BLK-7 = ", PROGRAMMING_LIST[7].encode('hex')
-    print "PRG-BLK-8 = ", PROGRAMMING_LIST[8].encode('hex')
+    #setup the Progaming list tuple
+    #    PROGRAMMING_LIST = list()
+    #
+    #    reader = StringIO(PROGRAMING_BLOCK)
+    #    for size, repeat, chunk, checksum in chunks(reader):
+    #        print "\nsize:", "0x%x" % size
+    #        print "repeat:", "0x%x" % repeat
+    #        print "total:", "0x%x" % (size * repeat)
+    #        print "data:"
+    #        #print hexprint(chunk)
+    #        PROGRAMMING_LIST.append(chunk)
+    #        print "checksum:", "0x%x" % checksum
+    #
+    #
+    #
+    #    print "number of programing block = ", "0x%x" % len(PROGRAMMING_LIST)
+    #    print "PRG-BLK-0 = ", PROGRAMMING_LIST[0].encode('hex')
+    #    PRG_BLK_1 = PROGRAMMING_LIST[1].encode('hex')
+    #
+    #    #ProgramingBlock1struct.unpack('>10sH16sHBBBBBBBHBHHH16sBB10sBBBBBBBB',)
+    #    print  "PROG-BLK-1, %30s, %16s, %10s, 0x%s" % (options.filename, MODEL_NUMBER, TANAPA, PRG_BLK_1)
+    #
+    #    print "PRG-BLK-2 = ", PROGRAMMING_LIST[2].encode('hex')
+    #    print "PRG-BLK-3 = ", PROGRAMMING_LIST[3].encode('hex')
+    #    print "PRG-BLK-4 = ", PROGRAMMING_LIST[4].encode('hex')
+    #    print "PRG-BLK-5 = ", PROGRAMMING_LIST[5].encode('hex')
+    #    print "PRG-BLK-6 = ", PROGRAMMING_LIST[6].encode('hex')
+    #    print "PRG-BLK-7 = ", PROGRAMMING_LIST[7].encode('hex')
+    #    print "PRG-BLK-8 = ", PROGRAMMING_LIST[8].encode('hex')
 if options.SHOW_PROGRAMING == "False" and options.SHOW_FEATURE == "False" and options.SHOW_TUNE == "False":
     print "no data shown"
 

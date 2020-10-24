@@ -89,7 +89,6 @@ def chunks(f):
 
 def chonks(pointer):
     
-    skip = 0
     while True:
         byte = data[pointer:(pointer+1)]
         if byte == "":
@@ -97,21 +96,15 @@ def chonks(pointer):
         if ord(byte) == 0x80:
             print ""
             print "80 field found"
-            print "skipped:", skip
-            skip = 0
             size = ord(data[(pointer+1):(pointer+2)])
             repeat = ord(data[(pointer+2):(pointer+3)]) or 1
-            chunk = data[(pointer+3):((pointer+3)+(size * repeat))]
+            chonk = data[(pointer+3):((pointer+3)+(size * repeat))]
             checksum = ord(data[(((pointer+3)+(size * repeat))):(((pointer+3)+(size * repeat))+1)])
-            yield size, repeat, chunk, checksum
+            yield size, repeat, chonk, checksum
             break
         elif ord(byte) == 0x84: #llrrnnnn if ll == 0, each element is nnnnn long and there are rr of them if ll != 0: ll is the length of each item and and there are rr+1 of them
             print ""
             print "84 field found"
-            print "skipped:", skip
-            if skip != 0:
-                break
-            skip = 0
             SIZE_TUPLE = (struct.unpack('>bbH',data[(pointer+1):(pointer+5)]))
             print "SIZE TUPLE = %s" % (SIZE_TUPLE,)
             print "SIZE TUPLE ll = %x" % SIZE_TUPLE[0]
@@ -124,13 +117,46 @@ def chonks(pointer):
         #size = int(SIZE_TUPLE[0] + SIZE_TUPLE[1])
             print "size   "  "0x%x" % size
             repeat =  1
-            chunk = data[(pointer+5):(pointer+5+size)]
+            chonk = data[(pointer+5):(pointer+5+size)]
             print "SIZZZZZZZZZE    " "0x%x" % size
             checksum = ord(data[(pointer+6+size)])
-            yield size, repeat, chunk, checksum
+            yield size, repeat, chonk, checksum
             break
+        if ord(byte) == 0xc4:
+            print ""
+            print "c4 field found"
+            # c4 ll rp 00 bk nn 00 <size> ck
+            #    ll -------------------------- is length of block
+            #       rp ----------------------- rp repeated blocks
+            #          00 ----- 00 ----------- Always 00 (spacer)
+            #             bk ----------------- block length
+            #                nn -------------- number of blocks
+            #                       size ----- Size is ll * rp, total chonk size is size + 8
+            #                             ck - Checksum 8
+
+            size = ord(data[(pointer+1):(pointer+2)])
+            repeat = ord(data[(pointer+2):(pointer+3)]) or 1
+            block_length = ord(data[(pointer+4):(pointer+5)])
+            block_number = ord(data[(pointer+5):(pointer+6)])
+            chonk = data[(pointer+7):((pointer+7)+(size * repeat))]
+            checksum = ord(data[(((pointer+7)+(size * repeat))):(((pointer+7)+(size * repeat))+1)])
+            yield size, repeat, chonk, checksum
+            break
+        if ord(byte) == 0xc0:
+            print ""
+            print "c0 field found"  # c0 ll rp ty <size> ck == ll is length of block, rp repeated blocks, ty is unknown, but suspected to be a type, ck is a checksum.
+            # ll * rp is size, total size is 5 + ll * rp
+            size = ord(data[(pointer+1):(pointer+2)])
+            repeat = ord(data[(pointer+2):(pointer+3)]) or 1
+            type = ord(data[(pointer+3):(pointer+4)])
+            chonk = data[(pointer+4):((pointer+4)+(size * repeat))]
+            checksum = ord(data[(((pointer+4)+(size * repeat))):(((pointer+4)+(size * repeat))+1)])
+            yield size, repeat, chonk, checksum
+            break
+
         else:
-            skip += 1
+            print "byte is not a 80, 84, c0, or c4"
+            break
 
 
 
@@ -681,17 +707,26 @@ if options.SHOW_PROGRAMING == True:
     print "tocpointers length",  len(TOC_POINTERS)
     for i in range(len(TOC_POINTERS)):
         print "Block ", "0x%02X" % i ," =>" ,TOC_POINTERS[i].encode('hex')
-                              
+    
 
-    blocknum=0x0a
-    for size, repeat, chunk, checksum in chonks(int(TOC_POINTERS[blocknum].encode('hex'), 16 ) ):
-        print "Block ", "0x%02X" % blocknum ," =>" ,TOC_POINTERS[blocknum].encode('hex')
-        print "size:", "0x%x" % size
-        print "repeat:", "0x%x" % repeat
-        print "total:", "0x%x" % size * repeat
-        print "data:"
-        print "Block ", "0x%02X" % blocknum ," =>" ,chunk.encode('hex')
-        print "checksum ", "0x%02X" % blocknum ," =>", "0x%02X" % checksum
+
+    blocknum=0x00
+    for i in range(len(TOC_POINTERS)):
+        
+       
+        if int(TOC_POINTERS[blocknum].encode('hex'), 16 ) == 0x0000 : # if it's zero, skip it
+            print "skipping chonk number ", "0x%02X" % blocknum, "is 0x0000"
+            blocknum += 0x1
+        else:
+            for size, repeat, chonk, checksum in chonks(int(TOC_POINTERS[blocknum].encode('hex'), 16 ) ):
+                print "chonk number ", "0x%02X" % blocknum ," =>" ,TOC_POINTERS[blocknum].encode('hex')
+                print "size:", "0x%x" % size
+                print "repeat:", "0x%x" % repeat
+                print "total size:", "0x%x" % size * repeat
+                print "chonk data ", "0x%02X" % blocknum ," =>" ,chonk.encode('hex')
+                print "checksum ", "0x%02X" % blocknum ," =>", "0x%02X" % checksum
+                blocknum += 0x1
+
 
 
 

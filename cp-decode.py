@@ -105,7 +105,7 @@ def chonks(pointer):
         elif ord(byte) == 0x84: #llrrnnnn if ll == 0, each element is nnnnn long and there are rr of them if ll != 0: ll is the length of each item and and there are rr+1 of them
             print ""
             print "84 field found"
-            SIZE_TUPLE = (struct.unpack('>bbH',data[(pointer+1):(pointer+5)]))
+            SIZE_TUPLE = (struct.unpack('>BBH',data[(pointer+1):(pointer+5)]))
             print "SIZE TUPLE = %s" % (SIZE_TUPLE,)
             print "SIZE TUPLE ll = %x" % SIZE_TUPLE[0]
             print "SIZE TUPLE rr = %x" % SIZE_TUPLE[1]
@@ -153,9 +153,26 @@ def chonks(pointer):
             checksum = ord(data[(((pointer+4)+(size * repeat))):(((pointer+4)+(size * repeat))+1)])
             yield size, repeat, chonk, checksum
             break
+        if ord(byte) == 0x04:
+            print ""
+            print "04 field found"  # No idea about this, it's always block 0x15 and only in the 50 and 65 radios.
+            # The checksum doesn't match 5A either, it's 0d.  The only value I've seen of it is 04 0100 0204 0200
+            size = 7
+            repeat = 1
+            chonk = data[(pointer+1):((pointer)+(size * repeat))]
+            checksum = 0 #ord(data[(((pointer+4)+(size * repeat))):(((pointer+4)+(size * repeat))+1)])
+            yield size, repeat, chonk, checksum
+            break
+
 
         else:
             print "byte is not a 80, 84, c0, or c4"
+            size = 0
+            repeat = 0
+            type = 0
+            chonk = "0x00"
+            checksum = 0
+            yield size, repeat, chonk, checksum
             break
 
 
@@ -710,22 +727,24 @@ if options.SHOW_PROGRAMING == True:
     
 
 
-    blocknum=0x00
+    chonknum=0x00
     for i in range(len(TOC_POINTERS)):
         
        
-        if int(TOC_POINTERS[blocknum].encode('hex'), 16 ) == 0x0000 : # if it's zero, skip it
-            print "skipping chonk number ", "0x%02X" % blocknum, "is 0x0000"
-            blocknum += 0x1
+        if int(TOC_POINTERS[chonknum].encode('hex'), 16 ) == 0x0000 : # if it's zero, skip it
+            print "skipping chonk number ", "0x%02X" % chonknum, "is 0x0000"
+            print "%s,CHONK DATA,0x%02X,0x%02X,0x0000" % (options.filename, (int(TOC_POINTERS[chonknum].encode('hex'), 16 )), chonknum)
+            chonknum += 0x1
         else:
-            for size, repeat, chonk, checksum in chonks(int(TOC_POINTERS[blocknum].encode('hex'), 16 ) ):
-                print "chonk number ", "0x%02X" % blocknum ," =>" ,TOC_POINTERS[blocknum].encode('hex')
+            for size, repeat, chonk, checksum in chonks(int(TOC_POINTERS[chonknum].encode('hex'), 16 ) ):
+                print "chonk number ", "0x%02X" % chonknum ," =>" ,TOC_POINTERS[chonknum].encode('hex')
                 print "size:", "0x%x" % size
                 print "repeat:", "0x%x" % repeat
                 print "total size:", "0x%x" % size * repeat
-                print "chonk data ", "0x%02X" % blocknum ," =>" ,chonk.encode('hex')
-                print "checksum ", "0x%02X" % blocknum ," =>", "0x%02X" % checksum
-                blocknum += 0x1
+                print "chonk data ", "0x%02X" % chonknum ," =>" ,chonk.encode('hex')
+                print "checksum ", "0x%02X" % chonknum ," =>", "0x%02X" % checksum
+                print "%s,CHONK DATA,0x%02X,0x%02X,0x%s" % (options.filename, (int(TOC_POINTERS[chonknum].encode('hex'), 16 )), chonknum, chonk.encode('hex'))
+                chonknum += 0x1
 
 
 

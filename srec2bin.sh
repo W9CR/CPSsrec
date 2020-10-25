@@ -45,8 +45,8 @@ srec_cat -Output -Binary tmp-stage-1.srec >tmp-stage-2.bin
 dd if=tmp-stage-2.bin of=tmp-stage-3.bin bs=1 skip=5
 
 # add 0x27F bytes to the file
-
-dd if=/dev/zero bs=1 count=640 > $outputfilename
+printf '\x02\x80' >$outputfilename
+dd if=/dev/zero bs=1 count=638 >> $outputfilename
 dd if=tmp-stage-3.bin >> $outputfilename
 
 #rm tmp-stage-2.bin tmp-stage-3.bin  tmp-stage-1.srec 

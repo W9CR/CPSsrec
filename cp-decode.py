@@ -142,14 +142,15 @@ def chonks(pointer):
             checksum = ord(data[(((pointer+7)+(size * repeat))):(((pointer+7)+(size * repeat))+1)])
             yield size, repeat, chonk, checksum
             break
-        if ord(byte) == 0xc0:
+        if ord(byte) == 0xc0:  # c0 chonks are lists, where each wad has it's own checksum in addition to the chonk checksum
             print ""
-            print "c0 field found"  # c0 ll rp ty <size> ck == ll is length of block, rp repeated blocks, ty is unknown, but suspected to be a type, ck is a checksum.
+            print "c0 field found"  # c0 ll nn <wad> <wc> ck == ll is length of wad, nn number of wads in the chonk, <wad> is the wad and <wc> is the wad checksum, ck is a checksum.
             # ll * rp is size, total size is 5 + ll * rp
             size = ord(data[(pointer+1):(pointer+2)])
             repeat = ord(data[(pointer+2):(pointer+3)]) or 1
-            type = ord(data[(pointer+3):(pointer+4)])
-            chonk = data[(pointer+4):((pointer+4)+(size * repeat))]
+            #type = ord(data[(pointer+3):(pointer+4)])
+            chonk = data[(pointer+3):((pointer+4)+(size * repeat))]
+            #need code to break into wads
             checksum = ord(data[(((pointer+4)+(size * repeat))):(((pointer+4)+(size * repeat))+1)])
             yield size, repeat, chonk, checksum
             break

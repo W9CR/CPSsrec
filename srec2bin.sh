@@ -10,8 +10,8 @@
 
 usage() 
 {
-	echo "used to convert a CPS srec file to binary for ayalisis" 
-	echo "Usage: srec2bin.sh input.bin output.srec"
+	echo "used to convert a CPS srec file to binary for analysis" 
+	echo "Usage: srec2bin.sh -i input.srec -o output.bin"
 }
 
 

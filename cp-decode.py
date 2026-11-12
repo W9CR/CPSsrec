@@ -11,13 +11,17 @@ import struct
 
 parser = OptionParser()
 parser.add_option("-f", "--file", dest="filename",
-                  help="write report to FILE", metavar="FILE" )
+                  help="Binary Waris Codeplug file (.mot)", metavar="FILE" )
 
 parser.add_option("-t", "--tuning", action="store_true", dest="SHOW_TUNE", default="False", help="show tuning block")
 
 parser.add_option("-F", "--feature", action="store_true", dest="SHOW_FEATURE", default="False", help="show feature block")
 
 parser.add_option("-p", "--programing", action="store_true", dest="SHOW_PROGRAMING", default="False", help="show programing block")
+
+parser.add_option("-c", "--chonk", dest="SHOW_CHONK", type="int", help="show only this chonk, used with -p")
+
+
 
 (options, args) = parser.parse_args()
 
@@ -43,50 +47,6 @@ parser.add_option("-p", "--programing", action="store_true", dest="SHOW_PROGRAMI
 #            skip += 1
 
 
-def chunks(f):
-    skip = 0
-    while True:
-        byte = f.read(1)
-        if byte == "":
-            break
-        if ord(byte) == 0x80:
-            print ""
-            print "80 field found"
-            print "skipped:", skip
-            skip = 0
-            size = ord(f.read(1))
-            repeat = ord(f.read(1)) or 1
-            chunk = f.read(size * repeat)
-            checksum = ord(f.read(1))
-            yield size, repeat, chunk, checksum
-        elif ord(byte) == 0x84: #llrrnnnn if ll == 0, each element is nnnnn long and there are rr of them if ll != 0: ll is the length of each item and and there are rr of them
-            print ""
-            print "84 field found"
-            print "skipped:", skip
-            if skip != 0:
-                break
-            skip = 0
-            SIZE_TUPLE = (struct.unpack('>bbH',(f.read(4))))
-            print "SIZE TUPLE = %s" % (SIZE_TUPLE,)
-            print "SIZE TUPLE ll = %s" % SIZE_TUPLE[0]
-            print "SIZE TUPLE rr = %s" % SIZE_TUPLE[1]
-            print "SIZE TUPLE nnnn = %s" % SIZE_TUPLE[2]
-            if SIZE_TUPLE[0] == 0:
-               size = int(SIZE_TUPLE[2] * SIZE_TUPLE[1])
-            elif SIZE_TUPLE[0] != 0:
-                size = int(SIZE_TUPLE[0] * (SIZE_TUPLE[1] + 1))
-            size = int(SIZE_TUPLE[0] + SIZE_TUPLE[1])
-            print "size"  "0x%x" % size
-            repeat =  1
-            chunk = f.read(size)
-            print "SIZZZZZZZZZE    " "0x%x" % size
-            checksum = ord(f.read(1))
-            yield size, repeat, chunk, checksum
-        else:
-            skip += 1
-
-
-
 def chonks(pointer):
     
     while True:
@@ -102,7 +62,15 @@ def chonks(pointer):
             checksum = ord(data[(((pointer+3)+(size * repeat))):(((pointer+3)+(size * repeat))+1)])
             yield size, repeat, chonk, checksum
             break
-        elif ord(byte) == 0x84: #llrrnnnn if ll == 0, each element is nnnnn long and there are rr of them if ll != 0: ll is the length of each item and and there are rr+1 of them
+        elif ord(byte) == 0x84: #llrrnnnn if ll != 0: ll is the length of each item and and there are rr+1 of them
+            # I think the if ll =0 is actually different per below.
+            # for the zone maps it's different
+            # 84 0006 0002 03 <DATA> CK
+            #    ^^^^ ---------------------- Number of wads starting with 1
+            #         ^^^^ ----------------- Size of data elements in a wad starting with 1
+            #              ^^ -------------- Start of a wad, this is the number of data elements in the wad starting with 1
+            #                  ^^^^ -------- length is number of data elements in wad * data element size
+            #                        ^^ ---- CK is the 8 bit checksum
             print ""
             print "84 field found"
             SIZE_TUPLE = (struct.unpack('>BBH',data[(pointer+1):(pointer+5)]))
@@ -111,6 +79,22 @@ def chonks(pointer):
             print "SIZE TUPLE rr = %x" % SIZE_TUPLE[1]
             print "SIZE TUPLE nnnn = ", "0x%x" % SIZE_TUPLE[2]
             if SIZE_TUPLE[0] == 0:
+                print "84 list found"
+                wads = (struct.unpack('>H',data[(pointer+1):(pointer+2)]))
+                wad_data_size = (struct.unpack('>H',data[(pointer+3):(pointer+4)]))
+                wad_start = ord(data[(pointer+5)])
+                wad_offset = 0x0
+                for i in range(wads):
+                    wad_start = ord(data[(pointer+5 + wad_offset)])
+                    wad_length = wad_start * wad_data_size
+                    print "Wad Length " "0x%2X" % wad_length
+                    print '"Wad data ", "0x%02X" % i ," =>" ,' .encode('hex')
+                    wad_offset = wad_offset + wad_length
+                
+                
+                
+                
+
                 size = int(SIZE_TUPLE[2] * SIZE_TUPLE[1])
             elif SIZE_TUPLE[0] != 0:
                 size = int(SIZE_TUPLE[0] * (SIZE_TUPLE[1]))

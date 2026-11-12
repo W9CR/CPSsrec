@@ -1,0 +1,104 @@
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.6	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.5	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.6	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.7	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.8	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.9	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	1.0	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	1.1	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	1.2	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	1.3	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	1.4	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	1.3	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	1.2	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	1.1	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	1.0	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.9	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.8	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.7	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.6	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.5	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.4	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.3	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.2	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	0.1	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	10.0	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	9.9	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	9.8	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	9.7	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	9.6	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	9.5	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	9.4	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	9.3	5
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	5.0	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	4.9	Click the down Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	4.8	Click the up Arrow
+Edit Mode Tx Offset Select	Edit Mode Page in Radio Configuration	4.9	Click the up Arrow
+Accessory Pin 9 Function Select	Accessory Pins Page in Radio Configuration	Null	External Emergency Switch (Input)
+CPS Password Enable	Password Page in Radio Configuration	UnChecked	Checked
+CPS Password Enable	Password Page in Radio Configuration	Checked	UnChecked
+CPS Password Enable	Password Page in Radio Configuration	UnChecked	Checked
+CPS Password Enable	Password Page in Radio Configuration	Checked	UnChecked
+CPS Password Enable	Password Page in Radio Configuration	UnChecked	Checked
+CPS Password Enable	Password Page in Radio Configuration	Checked	UnChecked
+CPS Password Enable	Password Page in Radio Configuration	UnChecked	Checked
+CPS Password Enable	Password Page in Radio Configuration	Checked	UnChecked
+CPS Password Enable	Password Page in Radio Configuration	UnChecked	Checked
+CPS Password Enable	Password Page in Radio Configuration	Checked	UnChecked
+Accessory Pin 9 Function Select	Accessory Pins Page in Radio Configuration	External Emergency Switch (Input)	Null
+Alias	Basic Page in Conventional Personality - 1	CHANNEL 1	FSG St Pete
+Radio Rx Freq	Basic Page in Conventional Personality - 1	469.992500	444.325
+Rx Squelch Code Type	Basic Page in Conventional Personality - 1	CSQ	TPL
+Rx TPL Frequency	Basic Page in Conventional Personality - 1	67.0	146.2
+Radio Tx Freq	Basic Page in Conventional Personality - 1	469.992500	449.325
+Tx Squelch Code Type	Basic Page in Conventional Personality - 1	CSQ	TPL
+Tx TPL Frequency	Basic Page in Conventional Personality - 1	67.0	146.2
+Talkaround	 Options Page in Conventional Personality - 1	UnChecked	Checked
+Tx Power Level	 Options Page in Conventional Personality - 1	High	Low
+Time-Out Timer (sec)	 Options Page in Conventional Personality - 1	60	180
+Rx Signaling System	Conv Pers Signaling  Page in Conventional Personality - 1	None	MDC-1
+Tx Signaling System	Conv Pers Signaling  Page in Conventional Personality - 1	None	MDC-1
+Signaling Squelch	Conv Pers Signaling  Page in Conventional Personality - 1	Or	And
+Signaling Squelch	Conv Pers Signaling  Page in Conventional Personality - 1	And	Or
+Non-Standard Reverse Burst	Advanced Page in Conventional Personality - 1	UnChecked	Checked
+Non-Standard Reverse Burst	Advanced Page in Conventional Personality - 1	Checked	UnChecked
+Expansion Type	Advanced Page in Conventional Personality - 1	Disabled	Low-level Expansion
+Add at the end	Conventional Personality
+Alias	Basic Page in Conventional Personality - 2	Conv Pers 2	FSG Tampa
+Radio Rx Freq	Basic Page in Conventional Personality - 2	470.000000	443.525
+Rx Squelch Code Type	Basic Page in Conventional Personality - 2	CSQ	TPL
+Rx TPL Frequency	Basic Page in Conventional Personality - 2	67.0	146.2
+Radio Tx Freq	Basic Page in Conventional Personality - 2	470.000000	448.525
+Tx Squelch Code Type	Basic Page in Conventional Personality - 2	CSQ	TPL
+Tx TPL Frequency	Basic Page in Conventional Personality - 2	67.0	146.2
+Talkaround	 Options Page in Conventional Personality - 2	UnChecked	Checked
+Voice Operated Tx (VOX)	 Options Page in Conventional Personality - 2	UnChecked	Checked
+Voice Operated Tx (VOX)	 Options Page in Conventional Personality - 2	Checked	UnChecked
+Edit Mode Enabled	 Options Page in Conventional Personality - 2	UnChecked	Checked
+Time-Out Timer (sec)	 Options Page in Conventional Personality - 2	60	180
+Rx Signaling System	Conv Pers Signaling  Page in Conventional Personality - 2	None	MDC-1
+Tx Signaling System	Conv Pers Signaling  Page in Conventional Personality - 2	None	MDC-1
+Scan List Index	Scan Page in Conventional Personality - 2	Disabled	Scan-1
+Phone System Index	Phone Page in Conventional Personality - 2	Disabled	Phone-1
+Expansion Type	Advanced Page in Conventional Personality - 2	Disabled	Low-level Expansion
+Alias	Zone Page in Personality Assignment to Zone - 1	ZONE 01	Tampa Bay
+Add at the end	Personality Assignment to Zone
+Add at the end	Personality Assignment to Zone
+Delete	Personality Assignment to Zone number 3
+Delete	Personality Assignment to Zone number 2
+Add at the end	
+Personality	 - 2	Conventional-1	Conventional-2
+PTT Sidetone	Basic Page in MDC System - 1	Checked	UnChecked
+Emergency Decode	Basic Page in MDC System - 1	UnChecked	Checked
+Primary ID	Basic Page in MDC System - 1	1111	1701
+MDC Message Alert Tone Auto Reset	Message / Status Page in MDC System - 1	UnChecked	Checked
+Personality	 - 1	Unassigned	Conventional-1
+Personality	 - 2	Unassigned	Conventional-2
+Radio Clock Update	Basic Page in Radio Configuration	UnChecked	Checked
+Recall Last Selected Menu	Menu Page in Radio Configuration	UnChecked	Checked
+VOX Status Enable	Default Display Page in Radio Configuration	UnChecked	Checked
+Tx TPL Reverse Burst	Basic Page in Conventional Personality - 1	Checked	UnChecked
+Tx TPL Reverse Burst	Basic Page in Conventional Personality - 1	UnChecked	Checked
+Talkaround	 Options Page in Conventional Personality - 1	Checked	UnChecked
+Tx Power Level	 Options Page in Conventional Personality - 1	Low	High
+Talkaround	 Options Page in Conventional Personality - 1	UnChecked	Checked

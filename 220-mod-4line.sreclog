@@ -1,0 +1,14 @@
+Add at the end	Conventional Personality
+Delete	Conventional Personality number 1
+Alias	Basic Page in Conventional Personality - 1	Conv Pers 1	223.500
+Radio Rx Freq	Basic Page in Conventional Personality - 1	225.000000	223.5
+Radio Tx Freq	Basic Page in Conventional Personality - 1	221.900000	223.5
+Time-Out Timer (sec)	 Options Page in Conventional Personality - 1	60	180
+Scan List Index	Scan Page in Conventional Personality - 1	Disabled	Scan-1
+Alias	Zone Page in Personality Assignment to Zone - 1	ZONE 01	Tampa Bay
+Personality	 - 1	Unknown Primitive type	
+Personality	 - 1	Unknown Primitive type	
+Personality	 - 1	Unknown Primitive type	
+Personality	 - 1	Unknown Primitive type	
+Personality	 - 1	Unknown Primitive type	
+Personality	 - 1	Unknown Primitive type	Conventional-1
